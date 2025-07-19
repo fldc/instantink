@@ -1,0 +1,33 @@
+[package]
+name = "hp-instant-ink-cli"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "hp-instant-ink-cli"
+path = "src/main.rs"
+
+[lib]
+name = "hp_instant_ink_cli"
+path = "src/lib.rs"
+
+[dependencies]
+tokio = { version = "1.0", features = ["full"] }
+reqwest = { version = "0.11", features = ["json"] }
+clap = { version = "4.0", features = ["derive"] }
+quick-xml = { version = "0.31", features = ["serialize"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tabled = "0.15"
+colored = "2.0"
+chrono = { version = "0.4", features = ["serde"] }
+chrono-tz = "0.8"
+anyhow = "1.0"
+thiserror = "1.0"
+log = "0.4"
+env_logger = "0.10"
+dirs = "5.0"
+regex = "1.10"
+
+[dev-dependencies]
+tokio-test = "0.4"

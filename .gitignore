@@ -1,0 +1,38 @@
+# Rust
+/target/
+Cargo.lock
+*.rs.bk
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.o
+*.so
+*.dylib
+*.exe
+
+# Editor temporary files
+*~
+.#*
+#*#
+
+# IDE
+.vscode/
+.idea/
+# Temporary and backup files
+*.tmp
+*.bak
+*.backup
+
+# Configuration and data files
+*.json
+*.csv
+*.log
