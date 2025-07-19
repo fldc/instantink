@@ -14,19 +14,64 @@ I happened to want this for my workflow so here it is, a command-line tool writt
 - **Pretty JSON output** option
 - **Cross-platform compatibility**
 
-## Installation
-
 ### Prerequisites
 
 - Rust 1.70+
 
-### Build from source
+## Installation
+
+### Method 1: Quick Install (Recommended)
+
+```bash
+# Clone and install in one go
+git clone https://github.com/your-username/hp-instant-ink-cli.git
+cd hp-instant-ink-cli
+./install.sh
+```
+
+This will:
+
+- Build the project in release mode
+- Install the binary to `/usr/local/bin/hp-instant-ink-cli`
+- Make it available system-wide
+
+### Method 2: Using Make
+
+```bash
+# Install to /usr/local/bin (default)
+make install
+
+# Install to custom directory
+INSTALL_DIR=/usr/bin make install
+
+# Uninstall
+make uninstall
+```
+
+### Method 3: Manual Build
 
 ```bash
 # Build release version
 cargo build --release
 
-# The binary will be available at ./target/release/hp-instant-ink-cli
+# Manually copy to your PATH
+sudo cp target/release/hp-instant-ink-cli /usr/local/bin/
+
+# Or install via Cargo
+cargo install --path .
+```
+
+### Uninstallation
+
+```bash
+# Using the uninstall script
+./uninstall.sh
+
+# Using Make
+make uninstall
+
+# Or manually remove
+sudo rm /usr/local/bin/hp-instant-ink-cli
 ```
 
 ## Usage
