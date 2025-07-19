@@ -35,45 +35,45 @@ cargo build --release
 
 ```bash
 # Set default printer (run once)
-./target/release/hp-instant-ink-cli config --set-printer 192.168.1.13
+hp-instant-ink-cli config --set-printer 192.168.1.13
 
 # Then just run without arguments
-./target/release/hp-instant-ink-cli
+hp-instant-ink-cli
 
 # Or specify printer directly
-./target/release/hp-instant-ink-cli --printer 192.168.1.13
+hp-instant-ink-cli --printer 192.168.1.13
 ```
 
 ### Configuration Management
 
 ```bash
 # Set default printer
-./target/release/hp-instant-ink-cli config --set-printer 192.168.1.13
+hp-instant-ink-cli config --set-printer 192.168.1.13
 
 # Set default format
-./target/release/hp-instant-ink-cli config --set-format json
+hp-instant-ink-cli config --set-format json
 
 # Set default timeout
-./target/release/hp-instant-ink-cli config --set-timeout 30
+hp-instant-ink-cli config --set-timeout 30
 
 # Show current configuration
-./target/release/hp-instant-ink-cli config --show
+hp-instant-ink-cli config --show
 
 # Reset to defaults
-./target/release/hp-instant-ink-cli config --reset
+hp-instant-ink-cli config --reset
 ```
 
 ### Direct binary usage
 
 ```bash
 # Basic usage with IP (auto-adds /DevMgmt/ProductUsageDyn.xml)
-./target/release/hp-instant-ink-cli --printer 192.168.1.13
+hp-instant-ink-cli --printer 192.168.1.13
 
 # JSON output
-./target/release/hp-instant-ink-cli --printer printer.local --format json
+hp-instant-ink-cli --printer printer.local --format json
 
 # With debugging
-./target/release/hp-instant-ink-cli --printer printer.local --verbose
+hp-instant-ink-cli --printer printer.local --verbose
 ```
 
 ## Command Line Options
