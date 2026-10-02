@@ -97,23 +97,23 @@ pub enum HPPrinterError {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct PrinterData {
     pub timestamp: DateTime<Utc>,
-    pub pages_printed: u32,
-    pub subscription_impressions: u32,
+    pub total_pages_printed: u32,
+    pub subscription_pages_printed: u32,
     pub colour_ink_level: u32,
     pub black_ink_level: u32,
 }
 
 impl PrinterData {
     pub fn new(
-        pages_printed: u32,
-        subscription_impressions: u32,
+        total_pages_printed: u32,
+        subscription_pages_printed: u32,
         colour_ink_level: u32,
         black_ink_level: u32,
     ) -> Self {
         Self {
             timestamp: Utc::now(),
-            pages_printed,
-            subscription_impressions,
+            total_pages_printed,
+            subscription_pages_printed,
             colour_ink_level,
             black_ink_level,
         }
@@ -220,9 +220,9 @@ impl HPPrinterClient {
         let xml_content = response.text().await?;
         debug!("Received XML content length: {} bytes", xml_content.len());
 
-        let pages_printed = self.extract_pages_from_xml(&xml_content);
+        let total_pages_printed = self.extract_total_pages_printed(&xml_content);
 
-        let subscription_impressions = self.extract_subscription_impressions(&xml_content);
+        let subscription_pages_printed = self.extract_subscription_pages_printed(&xml_content);
 
         let parsed: ProductUsageDyn = from_str(&xml_content).map_err(|e| {
             error!("Failed to parse XML: {e}");
@@ -254,14 +254,14 @@ impl HPPrinterClient {
         }
 
         Ok(PrinterData::new(
-            pages_printed,
-            subscription_impressions,
+            total_pages_printed,
+            subscription_pages_printed,
             colour_ink,
             black_ink,
         ))
     }
 
-    fn extract_pages_from_xml(&self, xml_content: &str) -> u32 {
+    fn extract_total_pages_printed(&self, xml_content: &str) -> u32 {
         let re = Regex::new(
             r#"<[^:]*:?TotalImpressions[^>]*PEID="[^"]*"[^>]*>(\d+)</[^:]*:?TotalImpressions>"#,
         )
@@ -288,25 +288,25 @@ impl HPPrinterClient {
             }
         }
 
-        warn!("Could not extract pages printed from XML");
+        warn!("Could not extract total pages printed from XML");
         0
     }
 
-    fn extract_subscription_impressions(&self, xml_content: &str) -> u32 {
+    fn extract_subscription_pages_printed(&self, xml_content: &str) -> u32 {
         let re = Regex::new(
             r"<[^:]*:?SubscriptionImpressions[^>]*>(\d+)</[^:]*:?SubscriptionImpressions>",
         )
         .unwrap();
         if let Some(captures) = re.captures(xml_content) {
             if let Some(value) = captures.get(1) {
-                if let Ok(impressions) = value.as_str().parse::<u32>() {
-                    debug!("Found SubscriptionImpressions: {impressions}");
-                    return impressions;
+                if let Ok(pages) = value.as_str().parse::<u32>() {
+                    debug!("Found SubscriptionImpressions: {pages}");
+                    return pages;
                 }
             }
         }
 
-        warn!("Could not extract subscription impressions from XML");
+        warn!("Could not extract subscription pages printed from XML");
         0
     }
 }

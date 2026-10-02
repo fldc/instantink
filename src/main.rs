@@ -14,12 +14,12 @@ use hp_instant_ink_cli::{
 fn create_table_data(data: &PrinterData) -> Vec<PrinterDataTable> {
     vec![
         PrinterDataTable {
-            metric: "Subscription Pages".to_string(),
-            value: data.subscription_impressions.to_string(),
+            metric: "Subscription Pages Printed (since enrollment)".to_string(),
+            value: data.subscription_pages_printed.to_string(),
         },
         PrinterDataTable {
-            metric: "Total Pages".to_string(),
-            value: data.pages_printed.to_string(),
+            metric: "Total Pages Printed (lifetime)".to_string(),
+            value: data.total_pages_printed.to_string(),
         },
         PrinterDataTable {
             metric: "Colour Ink Remaining".to_string(),

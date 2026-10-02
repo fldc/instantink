@@ -197,15 +197,15 @@ log in at <https://portal.hpsmart.com> again and run `hp-instant-ink-cli login`.
 ### Table format (default)
 
 ```plaintext
-╭──────────────────────┬──────────────────────────╮
-│ Metric               │ Value                    │
-├──────────────────────┼──────────────────────────┤
-│ Subscription Pages   │ 727                      │
-│ Total Pages          │ 3489                     │
-│ Colour Ink Remaining │ 87%                      │
-│ Black Ink Remaining  │ 49%                      │
-│ Last Updated         │ 2025-07-19 12:54:11 CEST │
-╰──────────────────────┴──────────────────────────╯
+╭───────────────────────────────────────────────┬──────────────────────────╮
+│ Metric                                        │ Value                    │
+├───────────────────────────────────────────────┼──────────────────────────┤
+│ Subscription Pages Printed (since enrollment) │ 727                      │
+│ Total Pages Printed (lifetime)                │ 3489                     │
+│ Colour Ink Remaining                          │ 87%                      │
+│ Black Ink Remaining                           │ 49%                      │
+│ Last Updated                                  │ 2025-07-19 12:54:11 CEST │
+╰───────────────────────────────────────────────┴──────────────────────────╯
 ```
 
 ### JSON format
@@ -213,8 +213,8 @@ log in at <https://portal.hpsmart.com> again and run `hp-instant-ink-cli login`.
 ```json
 {
   "timestamp": "2025-07-19T10:54:20.850043501Z",
-  "pages_printed": 3489,
-  "subscription_impressions": 727,
+  "total_pages_printed": 3489,
+  "subscription_pages_printed": 727,
   "colour_ink_level": 87,
   "black_ink_level": 49
 }
