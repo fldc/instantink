@@ -17,7 +17,7 @@ I happened to want this for my workflow so here it is, a command-line tool writt
 
 ### Prerequisites
 
-- Rust 1.70+
+- Rust 1.88+
 
 ## Installation
 
