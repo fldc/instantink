@@ -28,6 +28,8 @@ log = "0.4"
 env_logger = "0.10"
 dirs = "5.0"
 regex = "1.10"
+base64 = "0.22"
+rookie-cookies = "0.6.0"
 
 [dev-dependencies]
 tokio-test = "0.4"

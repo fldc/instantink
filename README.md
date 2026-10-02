@@ -5,6 +5,7 @@ I happened to want this for my workflow so here it is, a command-line tool writt
 ## Features
 
 - **Async HTTP requests** for fast performance
+- **Real Instant Ink balance** from HP's cloud (pages printed / remaining per billing cycle)
 - **Multiple output formats**: Table (default) and JSON
 - **Robust XML parsing** with fallback support for different HP printer models
 - **Configuration system** with persistent settings in `~/.config/hp-instant-ink/`
@@ -121,10 +122,60 @@ hp-instant-ink-cli --printer printer.local --format json
 hp-instant-ink-cli --printer printer.local --verbose
 ```
 
+### Real Instant Ink balance (cloud)
+
+The local XML endpoint only exposes cumulative counters, not the current
+billing-cycle allowance. To read the real balance (pages printed, rollover,
+overage and pages remaining for the current cycle), the tool uses HP's cloud
+API. The required `shell-session-id` cookie is read straight from your
+installed browser, so all you need is to be logged in:
+
+1. Log in at <https://portal.hpsmart.com> in your browser.
+2. Run:
+
+```bash
+hp-instant-ink-cli login     # import the cookie from your browser
+hp-instant-ink-cli balance   # print the current cycle
+hp-instant-ink-cli balance --format json
+```
+
+`balance` imports the cookie automatically if none is stored, and re-imports it
+if the stored one has expired. Use `--browser <id>` (e.g. `chromium`, `chrome`,
+`brave`, `firefox`) to read a specific browser, or fall back to the manual
+cookie with `config --set-session-id <value>`. The session cookie lasts about
+90 days; cached access tokens are refreshed automatically.
+
+Example output:
+
+```plaintext
+╭──────────────────┬──────────────────────╮
+│ Metric           │ Value                │
+├──────────────────┼──────────────────────┤
+│ Billing Period   │ 06/09/2025 - 05/10/… │
+│ Cycle            │ 06/09/2025 - 05/10/… │
+│ Plan Pages       │ 50                   │
+│ Pages Printed    │ 12                   │
+│   from Plan      │ 10                   │
+│   from Rollover  │ 2                    │
+│ Overage Pages    │ 0                    │
+│ Pages Remaining  │ 38                   │
+│ Rollover Cap     │ 150                  │
+│ Total Price      │ 0,00 €               │
+│ Last Updated     │ 2025-09-20 09:14:02  │
+╰──────────────────┴──────────────────────╯
+```
+
+If HP returns HTTP 401/403 and no fresh cookie can be read from the browser,
+log in at <https://portal.hpsmart.com> again and run `hp-instant-ink-cli login`.
+
 ## Command Line Options
 
 ### Main Commands
 
+- `login`: Import the HP `shell-session-id` cookie from your browser
+- `balance`: Fetch the real Instant Ink balance from HP's cloud (see above)
+  - `--browser <ID>`: Read the session cookie from a specific browser
+  - `--session-id <ID>`: Use a given shell-session-id instead of the browser
 - `--printer <HOST>`: Printer hostname/IP (auto-adds /DevMgmt/ProductUsageDyn.xml)
 - `--format <FORMAT>`: Output format - `table` (default) or `json`
 - `--pretty`: Pretty-print JSON output (only used with `--format json`)
@@ -137,6 +188,7 @@ hp-instant-ink-cli --printer printer.local --verbose
 - `config --set-printer <HOST>`: Set default printer
 - `config --set-format <FORMAT>`: Set default output format
 - `config --set-timeout <SECONDS>`: Set default timeout
+- `config --set-session-id <ID>`: Set the HP `shell-session-id` cookie for the cloud balance
 - `config --show`: Show current configuration
 - `config --reset`: Reset configuration to defaults
 
@@ -191,12 +243,21 @@ The tool stores configuration in `~/.config/hp-instant-ink/config.json`:
 
 ```json
 {
-  "default_printer": "http://192.168.1.13/DevMgmt/ProductUsageDyn.xml",
-  "timeout": 10,
-  "format": "table",
-  "pretty_json": false
+  "printer_url": "http://192.168.1.13/DevMgmt/ProductUsageDyn.xml",
+  "timeout_seconds": 30,
+  "last_updated": null,
+  "shell_session_id": "00000000-0000-0000-0000-000000000000",
+  "tenant_id": "…",
+  "account_id": "…",
+  "access_token": "…",
+  "access_token_expires": 1750000000,
+  "tenant_access_token": "…",
+  "tenant_access_token_expires": 1750000000
 }
 ```
+
+The cloud token fields (`tenant_id`, `account_id`, `*_token*`) are cached
+automatically after a successful `balance` run and can be omitted.
 
 ## Supported HP Printer Models
 
