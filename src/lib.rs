@@ -345,6 +345,13 @@ fn json_u32(value: &serde_json::Value) -> u32 {
         .unwrap_or(0)
 }
 
+fn is_auth_failure(err: &anyhow::Error) -> bool {
+    let message = err.to_string();
+    message.contains("HTTP 401")
+        || message.contains("HTTP 403")
+        || message.contains("HP rejected the shell-session-id")
+}
+
 fn decode_jwt_stratus_id(token: &str) -> Result<String> {
     use base64::engine::general_purpose::{URL_SAFE, URL_SAFE_NO_PAD};
     use base64::Engine;
@@ -608,6 +615,19 @@ impl InstantInkClient {
     pub async fn get_balance(&self, config: &mut Config) -> Result<InstantInkBalance> {
         self.ensure_tokens(config).await?;
 
+        match self.get_balance_once(config).await {
+            Ok(balance) => Ok(balance),
+            Err(err) if is_auth_failure(&err) => {
+                // The cached tokens were rejected (e.g. superseded by a newer
+                // login). Force a fresh exchange and retry once.
+                self.refresh_tokens(config).await?;
+                self.get_balance_once(config).await
+            }
+            Err(err) => Err(err),
+        }
+    }
+
+    async fn get_balance_once(&self, config: &mut Config) -> Result<InstantInkBalance> {
         let account_id = config
             .account_id
             .clone()
